@@ -1,44 +1,42 @@
-class RandomizedSet {
+ class RandomizedSet {
             private List<Integer> list;
-            private HashSet<Integer> set;
+            private Map<Integer, Integer> intToIndex;
 
             public RandomizedSet() {
                 this.list = new ArrayList<>();
-                this.set = new HashSet<>();
+                this.intToIndex = new HashMap<>();
             }
 
             public boolean insert(int val) {
-                if (set.contains(val)) {
+                if (intToIndex.containsKey(val)) {
                     return false;
                 }
 
-                set.add(val);
+                intToIndex.put(val, list.size());
                 list.add(val);
                 return true;
             }
 
             public boolean remove(int val) {
-                if (!set.contains(val)) {
+                if (!intToIndex.containsKey(val)) {
                     return false;
                 }
 
-                set.remove(val);
-                for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i) == val) {
-                        list.remove(i);
-                        break;
-                    }
+                int index = intToIndex.remove(val);
+                list.set(index, list.getLast());
+                list.removeLast();
+                if (!list.isEmpty() && index < list.size()) {
+                    intToIndex.put(list.get(index), index);
                 }
+
                 return true;
             }
 
             public int getRandom() {
-                int size = list.size();
-                int index = new Random().nextInt(size);
+                int index = new Random().nextInt(list.size());
                 return list.get(index);
             }
         }
-
 /**
  * Your RandomizedSet object will be instantiated and called as such:
  * RandomizedSet obj = new RandomizedSet();
